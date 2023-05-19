@@ -31,7 +31,7 @@ public class TorpedoStore {
 
   public boolean fire(int numberOfTorpedos) {
     // if there are no torpedos in the store,
-    // or one want to fire more torpedos than there are available,
+    // or one wants to fire more torpedos than there are available,
     // this method should throw an exception,
     // letting the caller know that firing failed
     if (numberOfTorpedos < 1 || numberOfTorpedos > this.torpedoCount) {
