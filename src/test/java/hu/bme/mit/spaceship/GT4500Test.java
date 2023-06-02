@@ -151,4 +151,114 @@ public class GT4500Test {
     verify(mockSecondary, times(1)).isEmpty();
   }
 
+  @Test
+  public void fireTorpedo_SingleFirePrimaryAgain_Success() {
+    // Arrange
+    when(mockPrimary.isEmpty()).thenReturn(false);
+    when(mockPrimary.fire(1)).thenReturn(true);
+    when(mockSecondary.isEmpty()).thenReturn(true);
+
+    // Act
+    boolean resultFirst = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean resultSecond = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, resultFirst);
+    assertEquals(true, resultSecond);
+    verify(mockPrimary, times(2)).isEmpty();
+    verify(mockPrimary, times(2)).fire(1);
+    verify(mockSecondary, times(1)).isEmpty();
+  }
+
+  @Test
+  public void fireTorpedo_SingleFirePrimaryAgainButEmpty_Failure() {
+    // Arrange
+    when(mockPrimary.isEmpty()).thenReturn(false).thenReturn(true);
+    when(mockPrimary.fire(1)).thenReturn(true);
+    when(mockSecondary.isEmpty()).thenReturn(true);
+
+    // Act
+    boolean resultFirst = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean resultSecond = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, resultFirst);
+    assertEquals(false, resultSecond);
+    verify(mockPrimary, times(2)).isEmpty();
+    verify(mockPrimary, times(1)).fire(1);
+    verify(mockSecondary, times(1)).isEmpty();
+  }
+
+  @Test
+  public void fireTorpedo_AllBothSucceed_Success() {
+    // Arrange
+    when(mockPrimary.isEmpty()).thenReturn(false);
+    when(mockPrimary.fire(1)).thenReturn(true);
+    when(mockSecondary.isEmpty()).thenReturn(false);
+    when(mockSecondary.fire(1)).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(true, result);
+    verify(mockPrimary, times(1)).isEmpty();
+    verify(mockPrimary, times(1)).fire(1);
+    verify(mockSecondary, times(1)).isEmpty();
+    verify(mockSecondary, times(1)).fire(1);
+  }
+
+  @Test
+  public void fireTorpedo_AllBothEmpty_Failure() {
+    // Arrange
+    when(mockPrimary.isEmpty()).thenReturn(true);
+    when(mockSecondary.isEmpty()).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(false, result);
+    verify(mockPrimary, times(1)).isEmpty();
+    verify(mockSecondary, times(0)).isEmpty();
+  }
+
+  @Test
+  public void fireTorpedo_AllOnlyPrimarySucceeds_Failure() {
+    // Arrange
+    when(mockPrimary.isEmpty()).thenReturn(false);
+    when(mockPrimary.fire(1)).thenReturn(true);
+    when(mockSecondary.isEmpty()).thenReturn(false);
+    when(mockSecondary.fire(1)).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(false, result);
+    verify(mockPrimary, times(1)).isEmpty();
+    verify(mockPrimary, times(1)).fire(1);
+    verify(mockSecondary, times(1)).isEmpty();
+    verify(mockSecondary, times(1)).fire(1);
+  }
+
+  @Test
+  public void fireTorpedo_AllOnlySecondarySucceeds_Failure() {
+    // Arrange
+    when(mockPrimary.isEmpty()).thenReturn(false);
+    when(mockPrimary.fire(1)).thenReturn(false);
+    when(mockSecondary.isEmpty()).thenReturn(false);
+    when(mockSecondary.fire(1)).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(false, result);
+    verify(mockPrimary, times(1)).isEmpty();
+    verify(mockPrimary, times(1)).fire(1);
+    verify(mockSecondary, times(1)).isEmpty();
+    verify(mockSecondary, times(0)).fire(1);
+  }
+
 }
